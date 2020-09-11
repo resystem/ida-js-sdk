@@ -7,9 +7,11 @@ const defaultPopupConfiguration = {
  * call ida sign popup and acitve response listener
  * @param {object} popupConfiguration popup window configuration 
  * @param {number} popupConfiguration.width widow width size 
- * @param {number} popupConfiguration.height widow height size 
+ * @param {number} popupConfiguration.height widow height size
+ * @returns {Promise} contains login data or error
  */
 export const signWithPopup = (popupConfiguration = defaultPopupConfiguration) => {
+  let logged = false;
   const openedWindow = window.open(
     process.env.ACCOUNTS_URI,
     '',
@@ -25,11 +27,22 @@ export const signWithPopup = (popupConfiguration = defaultPopupConfiguration) =>
     `,
   );
 
-  setTimeout(() => {
-    openedWindow.postMessage('signing', '*');
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      openedWindow.postMessage('signing', '*');
+    }, 2000);
+
+    openedWindow.addEventListener('onbeforeunload', () => {
+      if (!logged) reject({ error: 'window-closed' });
+    }, { passive: true });
+
     window.addEventListener("message", (windowMessage) => {
-      const data = JSON.parse(windowMessage.data);
-      console.log(data);
+      const response = JSON.parse(windowMessage.data);
+      if (response.error) reject(response)
+
+      logged = true;
+      openedWindow.close();
+      resolve(response);
     }, false);
-  }, 500);
+  });
 };

@@ -38,9 +38,6 @@ const initializeApp = ({ appId, appToken }) => {
   };
 };
 
-const app = initializeApp({ appId: 'weed', appToken: 'haxi' });
-app.signWithPopup();
-
 export default {
   initializeApp
 };
