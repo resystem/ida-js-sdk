@@ -1,6 +1,6 @@
 {
   "name": "@resystem/ida-js-sdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/ida.min.js",
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",
@@ -240,5 +240,13 @@
   },
   "author": "Gabriel Furlan",
   "license": "MIT",
-  "description": ""
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/resystem/ida-js-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/resystem/ida-js-sdk/issues"
+  },
+  "homepage": "https://github.com/resystem/ida-js-sdk#readme"
 }
