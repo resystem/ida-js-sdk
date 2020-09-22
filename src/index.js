@@ -1,11 +1,11 @@
-import { signWithPopup } from './auth';
+import { signinWithPopup, signupWithPopup } from './auth';
 
 /**
  * Authorize interface
  */
 const Auth = {
   appId: null,
-  appToken: null,
+  appKey: null,
   currentUser: null,
   onCurrentUserChange: () => {},
 };
@@ -23,18 +23,19 @@ const setCurrentUser = (currentUser) => {
  * initilize application setting configurations and verify a possible logged user
  * @param {object} config application configurations 
  * @param {string} config.appId application id to be initilize 
- * @param {string} config.appToken authentication token used in the initialization 
+ * @param {string} config.appKey authentication token used in the initialization 
  * @returns {Auth} authorize
  */
-const initializeApp = ({ appId, appToken }) => {
+const initializeApp = ({ appId, appKey }) => {
   Auth.appId = appId;
-  Auth.appToken = appToken;
+  Auth.appKey = appKey;
 
   return {
     onCurrentUserChange: (callback) => {
       Auth.onCurrentUserChange = (data) => callback(data);
     },
-    signWithPopup: (configuration) => signWithPopup(configuration, setCurrentUser),
+    signinWithPopup: (configuration) => signinWithPopup(configuration, setCurrentUser, Auth),
+    signupWithPopup: (configuration) => signupWithPopup(configuration, setCurrentUser, Auth),
   };
 };
 
