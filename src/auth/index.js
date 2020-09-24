@@ -1,3 +1,20 @@
+import axios from 'axios';
+
+/**
+ * request to api token validation
+ * @returns {Promise} contains verify data
+ */
+const verifyAuth_ = (token) => axios.post(
+  `${process.env.API_URI}/validate-token`,
+  { token },
+  {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json',
+    },
+  },
+);
+
 const defaultPopupConfiguration = {
   width: 320,
   height: 480,
@@ -91,4 +108,33 @@ export const signupWithPopup = (popupConfiguration = defaultPopupConfiguration, 
       setCurrentUser(response);
     }, false);
   });
+};
+
+/**
+ * verify if has logged user and if token is valid 
+ * @param {object} params initialization parameters
+ */
+export const init = async ({ setCurrentUser }) => {
+  if (!window) return;
+
+  const ida = window.localStorage.getItem('ida@id');
+  const token = window.localStorage.getItem('ida@token');
+  
+  if (!ida || !token) {
+    window.localStorage.removeItem('ida@id');
+    window.localStorage.removeItem('ida@token');
+    return;
+  }
+
+  let tokenVerification;
+  
+  try {
+    tokenVerification = await verifyAuth_(token);
+  } catch (err) {
+    window.localStorage.removeItem('ida@id');
+    window.localStorage.removeItem('ida@token');
+    throw err;
+  }
+
+  setCurrentUser(tokenVerification.data);
 };

@@ -29,6 +29,7 @@
     "array-unique": "^0.3.2",
     "assign-symbols": "^1.0.0",
     "atob": "^2.1.2",
+    "axios": "^0.20.0",
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "balanced-match": "^1.0.0",
     "base": "^0.11.2",

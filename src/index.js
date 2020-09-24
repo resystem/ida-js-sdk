@@ -1,4 +1,4 @@
-import { signinWithPopup, signupWithPopup } from './auth';
+import { init, signinWithPopup, signupWithPopup } from './auth';
 
 /**
  * Authorize interface
@@ -30,9 +30,17 @@ const initializeApp = ({ appId, appKey }) => {
   Auth.appId = appId;
   Auth.appKey = appKey;
 
+  if (window) {
+    init({ Auth, setCurrentUser });
+  }
+
   return {
     onCurrentUserChange: (callback) => {
-      Auth.onCurrentUserChange = (data) => callback(data);
+      Auth.onCurrentUserChange = (data) => {
+        window.localStorage.setItem('ida@id', data.ida);
+        window.localStorage.setItem('ida@token', data.token);
+        callback(data)
+      };
     },
     signinWithPopup: (configuration) => signinWithPopup(configuration, setCurrentUser, Auth),
     signupWithPopup: (configuration) => signupWithPopup(configuration, setCurrentUser, Auth),
