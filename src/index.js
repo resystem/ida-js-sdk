@@ -17,8 +17,10 @@ const Auth = {
  * @param {Auth.currentUser} currentUser logged user data 
  */
 const setCurrentUser = (currentUser) => {
-  window.localStorage.setItem('ida@id', currentUser.ida);
-  window.localStorage.setItem('ida@token', currentUser.token);
+  if (currentUser) {
+    window.localStorage.setItem('ida@id', currentUser.ida);
+    window.localStorage.setItem('ida@token', currentUser.token);
+  }
 
   Auth.onCurrentUserChange(currentUser);
   Auth.currentUser = currentUser;
