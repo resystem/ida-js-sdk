@@ -1,4 +1,6 @@
-import { init, signinWithPopup, signupWithPopup } from './auth';
+import {
+  init, signinWithPopup, signupWithPopup,
+} from './auth';
 
 /**
  * Authorize interface
@@ -15,6 +17,9 @@ const Auth = {
  * @param {Auth.currentUser} currentUser logged user data 
  */
 const setCurrentUser = (currentUser) => {
+  window.localStorage.setItem('ida@id', currentUser.ida);
+  window.localStorage.setItem('ida@token', currentUser.token);
+
   Auth.onCurrentUserChange(currentUser);
   Auth.currentUser = currentUser;
 };
@@ -26,27 +31,26 @@ const setCurrentUser = (currentUser) => {
  * @param {string} config.appKey authentication token used in the initialization 
  * @returns {Auth} authorize
  */
-const initializeApp = ({ appId, appKey }) => {
+export const initializeApp = ({ appId, appKey }) => {
   Auth.appId = appId;
   Auth.appKey = appKey;
 
-  if (window) {
-    init({ Auth, setCurrentUser });
-  }
+  const checkWindow = setTimeout(() => {
+    if (!(typeof window === 'undefined')) {
+      init({ Auth, setCurrentUser });
+      clearTimeout(checkWindow);
+    }
+  }, 200);
 
   return {
     onCurrentUserChange: (callback) => {
-      Auth.onCurrentUserChange = (data) => {
-        window.localStorage.setItem('ida@id', data.ida);
-        window.localStorage.setItem('ida@token', data.token);
-        callback(data)
-      };
+      Auth.onCurrentUserChange = callback;
     },
     signinWithPopup: (configuration) => signinWithPopup(configuration, setCurrentUser, Auth),
     signupWithPopup: (configuration) => signupWithPopup(configuration, setCurrentUser, Auth),
   };
 };
 
-export default {
+export default ({
   initializeApp
-};
+});

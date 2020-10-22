@@ -28,7 +28,7 @@ const defaultPopupConfiguration = {
  * @returns {Promise} contains login data or error
  */
 export const signinWithPopup = (popupConfiguration = defaultPopupConfiguration, setCurrentUser, Auth) => {
-  let logged = false;
+  // let logged = false;
   const openedWindow = window.open(
     `${process.env.ACCOUNTS_URI}?appId=${Auth.appId}&appKey=${Auth.appKey}`,
     '',
@@ -49,15 +49,15 @@ export const signinWithPopup = (popupConfiguration = defaultPopupConfiguration, 
       openedWindow.postMessage('signing', '*');
     }, 2000);
 
-    openedWindow.addEventListener('onbeforeunload', () => {
-      if (!logged) reject({ error: 'window-closed' });
-    }, { passive: true });
+    // openedWindow.addEventListener('onbeforeunload', () => {
+    //   if (!logged) reject({ error: 'window-closed' });
+    // }, { passive: true });
 
     window.addEventListener("message", (windowMessage) => {
       const response = JSON.parse(windowMessage.data);
       if (response.error) reject(response)
-
-      logged = true;
+  
+      // logged = true;
       openedWindow.close();
       resolve(response);
       setCurrentUser(response);
@@ -73,7 +73,7 @@ export const signinWithPopup = (popupConfiguration = defaultPopupConfiguration, 
  * @returns {Promise} contains login data or error
  */
 export const signupWithPopup = (popupConfiguration = defaultPopupConfiguration, setCurrentUser, Auth) => {
-  let logged = false;
+  // let logged = false;
   const openedWindow = window.open(
     `${process.env.ACCOUNTS_URI}/signup?appId=${Auth.appId}&appKey=${Auth.appKey}`,
     '',
@@ -94,15 +94,16 @@ export const signupWithPopup = (popupConfiguration = defaultPopupConfiguration, 
       openedWindow.postMessage('signing', '*');
     }, 2000);
 
-    openedWindow.addEventListener('onbeforeunload', () => {
-      if (!logged) reject({ error: 'window-closed' });
-    }, { passive: true });
+    // openedWindow.addEventListener('onbeforeunload', () => {
+    //   if (!logged) reject({ error: 'window-closed' });
+    // }, { passive: true });
 
     window.addEventListener("message", (windowMessage) => {
       const response = JSON.parse(windowMessage.data);
+
       if (response.error) reject(response)
 
-      logged = true;
+      // logged = true;
       openedWindow.close();
       resolve(response);
       setCurrentUser(response);
@@ -115,14 +116,14 @@ export const signupWithPopup = (popupConfiguration = defaultPopupConfiguration, 
  * @param {object} params initialization parameters
  */
 export const init = async ({ setCurrentUser }) => {
-  if (!window) return;
-
   const ida = window.localStorage.getItem('ida@id');
   const token = window.localStorage.getItem('ida@token');
   
   if (!ida || !token) {
     window.localStorage.removeItem('ida@id');
     window.localStorage.removeItem('ida@token');
+
+    setCurrentUser(null);
     return;
   }
 
@@ -133,8 +134,9 @@ export const init = async ({ setCurrentUser }) => {
   } catch (err) {
     window.localStorage.removeItem('ida@id');
     window.localStorage.removeItem('ida@token');
-    throw err;
+
+    setCurrentUser(null);
   }
 
-  setCurrentUser(tokenVerification.data);
+  setCurrentUser({ ...tokenVerification.data, token });
 };
