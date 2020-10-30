@@ -1,5 +1,5 @@
 import {
-  init, signinWithPopup, signupWithPopup,
+  init, logout, signinWithPopup, signupWithPopup,
 } from './auth';
 
 /**
@@ -50,6 +50,7 @@ export const initializeApp = ({ appId, appKey }) => {
     },
     signinWithPopup: (configuration) => signinWithPopup(configuration, setCurrentUser, Auth),
     signupWithPopup: (configuration) => signupWithPopup(configuration, setCurrentUser, Auth),
+    logout: () => logout({ setCurrentUser }),
   };
 };
 
