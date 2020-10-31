@@ -140,3 +140,14 @@ export const init = async ({ setCurrentUser }) => {
 
   setCurrentUser({ ...tokenVerification.data, token });
 };
+
+/**
+ * logout - Make logout
+ * @param {object} params initialization parameters
+ */
+export const logout = async ({ setCurrentUser }) => {
+  window.localStorage.removeItem('ida@id');
+  window.localStorage.removeItem('ida@token');
+
+  setCurrentUser(null);
+};
