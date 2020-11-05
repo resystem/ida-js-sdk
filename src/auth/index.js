@@ -153,3 +153,20 @@ export const logout = async ({ setCurrentUser }) => {
 
   setCurrentUser(null);
 };
+
+export const validateToken = async ({ token, setCurrentUser }) => {
+  let tokenVerification;
+
+  try {
+    tokenVerification = await verifyAuth_(token);
+    console.log('tokenVerification', tokenVerification);
+  } catch (err) {
+    window.localStorage.removeItem('ida@id');
+    window.localStorage.removeItem('ida@token');
+
+    setCurrentUser(null);
+  }
+
+  setCurrentUser({ ...tokenVerification.data, token });
+  return tokenVerification;
+}
