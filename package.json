@@ -1,10 +1,6 @@
 {
   "name": "@resystem/ida-js-sdk",
-<<<<<<< Updated upstream
-  "version": "0.0.40",
-=======
-  "version": "0.0.33",
->>>>>>> Stashed changes
+  "version": "0.0.41",
   "main": "dist/ida.min.js",
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",
