@@ -41,7 +41,7 @@ export const initializeApp = ({ appId, appKey }) => {
     console.log('ida listen...');
     if (!(typeof window === 'undefined')) {
       init({ Auth, setCurrentUser });
-      clearTimeout(checkWindow);
+      clearInterval(checkWindow);
     }
   }, 200);
 
