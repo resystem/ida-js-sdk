@@ -154,7 +154,7 @@ export const logout = async ({ setCurrentUser }) => {
   setCurrentUser(null);
 };
 
-export const validateToken = async ({ token }) => {
+export const validateToken = async ({ token, setCurrentUser }) => {
   let tokenVerification;
 
   try {

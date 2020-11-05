@@ -51,7 +51,7 @@ export const initializeApp = ({ appId, appKey }) => {
     signinWithPopup: (configuration) => signinWithPopup(configuration, setCurrentUser, Auth),
     signupWithPopup: (configuration) => signupWithPopup(configuration, setCurrentUser, Auth),
     logout: () => logout({ setCurrentUser }),
-    validateToken: ({ token }) => validateToken({ token }),
+    validateToken: ({ token }) => validateToken({ token, setCurrentUser }),
   };
 };
 
