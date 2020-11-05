@@ -37,14 +37,12 @@ export const initializeApp = ({ appId, appKey }) => {
   Auth.appId = appId;
   Auth.appKey = appKey;
 
-  let timer = setInterval(() => {
-    console.log('ida listen...');
+  setTimeout(() => {
     if (!(typeof window === 'undefined')) {
-      console.log('init ida');
-      clearInterval(timer);
+      console.log('init ida...');
       init({ Auth, setCurrentUser });
     }
-  }, 200);
+  }, 500);
 
   return {
     onCurrentUserChange: (callback) => {
