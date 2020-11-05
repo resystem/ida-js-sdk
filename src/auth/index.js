@@ -134,11 +134,13 @@ export const init = async ({ setCurrentUser }) => {
   } catch (err) {
     window.localStorage.removeItem('ida@id');
     window.localStorage.removeItem('ida@token');
-
     setCurrentUser(null);
+    return;
   }
 
-  setCurrentUser({ ...tokenVerification.data, token });
+  if (tokenVerification) {
+    setCurrentUser({ ...tokenVerification.data, token });
+  }
 };
 
 /**
