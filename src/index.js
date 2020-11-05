@@ -37,10 +37,11 @@ export const initializeApp = ({ appId, appKey }) => {
   Auth.appId = appId;
   Auth.appKey = appKey;
 
-  const checkWindow = setTimeout(() => {
+  const checkWindow = setInterval(() => {
+    console.log('ida listen...');
     if (!(typeof window === 'undefined')) {
       init({ Auth, setCurrentUser });
-      clearTimeout(checkWindow);
+      clearInterval(checkWindow);
     }
   }, 200);
 
