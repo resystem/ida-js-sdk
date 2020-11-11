@@ -1,6 +1,10 @@
 {
   "name": "@resystem/ida-js-sdk",
+<<<<<<< HEAD
   "version": "0.0.47",
+=======
+  "version": "0.0.49",
+>>>>>>> 0208f6fbd946f77325750e536f19cacbf20b2536
   "main": "dist/ida.min.js",
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",
