@@ -27,10 +27,10 @@ const defaultPopupConfiguration = {
  * @param {number} popupConfiguration.height widow height size
  * @returns {Promise} contains login data or error
  */
-export const signinWithPopup = (popupConfiguration = defaultPopupConfiguration, setCurrentUser, Auth) => {
+export const signinWithPopup = (popupConfiguration = defaultPopupConfiguration, setCurrentUser, Auth, socket) => {
   // let logged = false;
   const openedWindow = window.open(
-    `${process.env.ACCOUNTS_URI}?appId=${Auth.appId}&appKey=${Auth.appKey}`,
+    `${process.env.ACCOUNTS_URI}?appId=${Auth.appId}&appKey=${Auth.appKey}&client_id=${socket.id}`,
     '',
     `
       toolbar=no,
@@ -156,8 +156,9 @@ export const logout = async ({ setCurrentUser }) => {
 
 export const validateToken = async ({ token, setCurrentUser }) => {
   let tokenVerification;
-
+  
   try {
+    console.log('validateToken');
     tokenVerification = await verifyAuth_(token);
     console.log('tokenVerification', tokenVerification);
   } catch (err) {
