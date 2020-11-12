@@ -1,6 +1,6 @@
 {
   "name": "@resystem/ida-js-sdk",
-  "version": "0.0.54",
+  "version": "0.0.55",
   "main": "dist/ida.min.js",
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",
@@ -201,7 +201,7 @@
     "snapdragon": "^0.8.2",
     "snapdragon-node": "^2.1.1",
     "snapdragon-util": "^3.0.1",
-    "socket.io-client": "^3.0.1",
+    "socket.io-client": "2.3.0",
     "source-map": "^0.5.7",
     "source-map-resolve": "^0.5.3",
     "source-map-url": "^0.4.0",
