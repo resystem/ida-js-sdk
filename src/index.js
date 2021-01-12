@@ -10,7 +10,6 @@ const Auth = {
   appId: null,
   appKey: null,
   currentUser: null,
-  socket: null,
   onCurrentUserChange: () => {},
 };
 
@@ -54,8 +53,6 @@ export const initializeApp = async ({ appId, appKey, onLoad, onOpen, onAuthChang
         logout: () => logout({ setCurrentUser, socket }),
         validateToken: ({ token }) => validateToken({ token }),
       });
-
-      Auth.socket = socket;
     });
     
     init({ Auth, onAuthChange });
@@ -67,9 +64,5 @@ export const initializeApp = async ({ appId, appKey, onLoad, onOpen, onAuthChang
 };
 
 export default ({
-  initializeApp,
-  signinWithPopup: (configuration) => signinWithPopup(configuration, Auth, Auth.socket),
-  signupWithPopup: (configuration) => signupWithPopup(configuration, Auth, Auth.socket),
-  logout: () => logout({ setCurrentUser, socket: Auth.socket }),
-  validateToken: ({ token }) => validateToken({ token }),
+  initializeApp
 });
