@@ -27,42 +27,29 @@ const defaultPopupConfiguration = {
  * @param {number} popupConfiguration.height widow height size
  * @returns {Promise} contains login data or error
  */
-export const signinWithPopup = (popupConfiguration = defaultPopupConfiguration, setCurrentUser, Auth, socket) => {
+export const signinWithPopup = (popupConfiguration = defaultPopupConfiguration, Auth, socket) => {
   // let logged = false;
-  const openedWindow = window.open(
-    `${process.env.ACCOUNTS_URI}?appId=${Auth.appId}&appKey=${Auth.appKey}&client_id=${socket.id}`,
-    '',
-    `
-      toolbar=no,
-      location=no,
-      status=no,
-      menubar=no,
-      scrollbars=yes,
-      resizable=no,
-      width=${popupConfiguration.width},
-      height=${popupConfiguration.height}
-    `,
-  );
-
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      openedWindow.postMessage('signing', '*');
-    }, 2000);
-
-    // openedWindow.addEventListener('onbeforeunload', () => {
-    //   if (!logged) reject({ error: 'window-closed' });
-    // }, { passive: true });
-
-    window.addEventListener("message", (windowMessage) => {
-      const response = JSON.parse(windowMessage.data);
-      if (response.error) reject(response)
-  
-      // logged = true;
+  try {
+    const openedWindow = window.open(
+      `${process.env.ACCOUNTS_URI}?appId=${Auth.appId}&appKey=${Auth.appKey}&client_id=${socket.id}`,
+      '',
+      `
+        toolbar=no,
+        location=no,
+        status=no,
+        menubar=no,
+        scrollbars=yes,
+        resizable=no,
+        width=${popupConfiguration.width},
+        height=${popupConfiguration.height}
+      `,
+    );
+    socket.on('auth_change', async () => {
       openedWindow.close();
-      resolve(response);
-      setCurrentUser(response);
-    }, false);
-  });
+    });
+  } catch (err) {
+    console.error('signinWithPopup -> err', [err]);
+  }
 };
 
 /**
@@ -72,50 +59,36 @@ export const signinWithPopup = (popupConfiguration = defaultPopupConfiguration, 
  * @param {number} popupConfiguration.height widow height size
  * @returns {Promise} contains login data or error
  */
-export const signupWithPopup = (popupConfiguration = defaultPopupConfiguration, setCurrentUser, Auth) => {
+export const signupWithPopup = (popupConfiguration = defaultPopupConfiguration, Auth, socket) => {
   // let logged = false;
-  const openedWindow = window.open(
-    `${process.env.ACCOUNTS_URI}/signup?appId=${Auth.appId}&appKey=${Auth.appKey}`,
-    '',
-    `
-      toolbar=no,
-      location=no,
-      status=no,
-      menubar=no,
-      scrollbars=yes,
-      resizable=no,
-      width=${popupConfiguration.width},
-      height=${popupConfiguration.height}
-    `,
-  );
-
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      openedWindow.postMessage('signing', '*');
-    }, 2000);
-
-    // openedWindow.addEventListener('onbeforeunload', () => {
-    //   if (!logged) reject({ error: 'window-closed' });
-    // }, { passive: true });
-
-    window.addEventListener("message", (windowMessage) => {
-      const response = JSON.parse(windowMessage.data);
-
-      if (response.error) reject(response)
-
-      // logged = true;
+  try {
+    const openedWindow = window.open(
+      `${process.env.ACCOUNTS_URI}/signup?appId=${Auth.appId}&appKey=${Auth.appKey}&client_id=${socket.id}`,
+      '',
+      `
+        toolbar=no,
+        location=no,
+        status=no,
+        menubar=no,
+        scrollbars=yes,
+        resizable=no,
+        width=${popupConfiguration.width},
+        height=${popupConfiguration.height}
+      `,
+    );
+    socket.on('auth_change', async () => {
       openedWindow.close();
-      resolve(response);
-      setCurrentUser(response);
-    }, false);
-  });
+    });
+  } catch (err) {
+    console.error('signupWithPopup -> err', [err]);
+  }
 };
 
 /**
  * verify if has logged user and if token is valid 
  * @param {object} params initialization parameters
  */
-export const init = async ({ setCurrentUser }) => {
+export const init = async ({ onAuthChange }) => {
   const ida = window.localStorage.getItem('ida@id');
   const token = window.localStorage.getItem('ida@token');
   
@@ -123,7 +96,7 @@ export const init = async ({ setCurrentUser }) => {
     window.localStorage.removeItem('ida@id');
     window.localStorage.removeItem('ida@token');
 
-    setCurrentUser(null);
+    onAuthChange(null);
     return;
   }
 
@@ -132,14 +105,15 @@ export const init = async ({ setCurrentUser }) => {
   try {
     tokenVerification = await verifyAuth_(token);
   } catch (err) {
+    console.error('err', [err]);
     window.localStorage.removeItem('ida@id');
     window.localStorage.removeItem('ida@token');
-    setCurrentUser(null);
+    onAuthChange(null);
     return;
   }
 
   if (tokenVerification) {
-    setCurrentUser({ ...tokenVerification.data, token });
+    onAuthChange({ ...tokenVerification.data, token });
   }
 };
 
@@ -158,16 +132,21 @@ export const validateToken = async ({ token, setCurrentUser }) => {
   let tokenVerification;
   
   try {
-    console.log('validateToken');
     tokenVerification = await verifyAuth_(token);
-    console.log('tokenVerification', tokenVerification);
   } catch (err) {
+    console.error('err', [err]);
     window.localStorage.removeItem('ida@id');
     window.localStorage.removeItem('ida@token');
 
     setCurrentUser(null);
   }
 
-  setCurrentUser({ ...tokenVerification.data, token });
-  return tokenVerification;
+  return ({ ...tokenVerification.data, token });
+}
+
+export const onAuthChangeListenner = (cb, socket) => {
+  socket.on('auth_change', async (payload) => {
+    const user = await validateToken({ token: payload.token });
+    cb(user);
+  });
 }

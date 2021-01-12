@@ -1,5 +1,5 @@
 import {
-  init, logout, signinWithPopup, signupWithPopup, validateToken,
+  init, logout, onAuthChangeListenner, signinWithPopup, signupWithPopup, validateToken,
 } from './auth';
 import socketIOClient from 'socket.io-client';
 
@@ -34,38 +34,33 @@ const setCurrentUser = (currentUser) => {
  * @param {string} config.appKey authentication token used in the initialization 
  * @returns {Auth} authorize
  */
-export const initializeApp = async ({ appId, appKey }) => {
-  Auth.appId = appId;
-  Auth.appKey = appKey;
+export const initializeApp = async ({ appId, appKey, onLoad, onOpen, onAuthChange }) => {
   try {
+    Auth.appId = appId;
+    Auth.appKey = appKey;
     const socket = await socketIOClient(process.env.SOCKET_URI, { transports: ['websocket'] });
-    socket.emit('connect', { client_type: appId });
-    socket.on('opened', (payload) => console.log('ida-js-sdk -> window opened: ', payload));
-    socket.on('auth_change', (payload) => console.log('ida-js-sdk -> update_auth: ', payload));
-    socket.on('error', (payload) => console.log('ida-js-sdk -> error: ', payload));
-    console.log('initializeApp -> socket', socket);
-
+    console.log('initializeApp -> ');
+    
+    socket.emit('init', { client_type: appId });
+    socket.on('opened', (payload) => onOpen(payload));
+    socket.on('error', (payload) => console.error('ida-js-sdk -> error: ', payload));
+    onAuthChangeListenner(onAuthChange, socket);
+    
+    socket.on('connect', () => {
+      onLoad({
+        signinWithPopup: (configuration) => signinWithPopup(configuration, Auth, socket),
+        signupWithPopup: (configuration) => signupWithPopup(configuration, Auth, socket),
+        logout: () => logout({ setCurrentUser, socket }),
+        validateToken: ({ token }) => validateToken({ token }),
+      });
+    });
+    
+    init({ Auth, onAuthChange });
+    
+    return 
   } catch (err) {
-    console.log('err', err);
+    console.error('err', err);
   }
-
-  const checkWindow = setInterval(() => {
-    console.log('ida listen...');
-    if (!(typeof window === 'undefined')) {
-      console.log('init ida...');
-      init({ Auth, setCurrentUser });
-    }
-  }, 500);
-
-  return {
-    onCurrentUserChange: (callback) => {
-      Auth.onCurrentUserChange = callback;
-    },
-    signinWithPopup: (configuration) => signinWithPopup(configuration, setCurrentUser, Auth, socket),
-    signupWithPopup: (configuration) => signupWithPopup(configuration, setCurrentUser, Auth, socket),
-    logout: () => logout({ setCurrentUser, socket }),
-    validateToken: ({ token }) => validateToken({ token, setCurrentUser, socket }),
-  };
 };
 
 export default ({
