@@ -18,7 +18,6 @@ const Auth = {
  * @param {Auth.currentUser} currentUser logged user data 
  */
 const setCurrentUser = (currentUser) => {
-console.log('🚀 ~ file: index.js ~ line 21 ~ setCurrentUser ~ currentUser', currentUser);
   if (currentUser) {
     window.localStorage.setItem('ida@id', currentUser.ida);
     window.localStorage.setItem('ida@token', currentUser.token);
@@ -45,9 +44,9 @@ export const initializeApp = async ({ appId, appKey, onLoad, onOpen, onAuthChang
     socket.emit('init', { client_type: appId });
     socket.on('opened', (payload) => onOpen(payload));
     socket.on('error', (payload) => console.error('ida-js-sdk -> error: ', payload));
-    onAuthChangeListenner((props) => {
-      console.log('🚀 ~ file: index.js ~ line 49 ~ onAuthChangeListenner ~ props', props);
-      onAuthChange(props);
+    onAuthChangeListenner((user) => {
+      setCurrentUser(user)
+      onAuthChange(user);
     }, socket);
     
     socket.on('connect', () => {
