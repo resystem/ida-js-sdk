@@ -1,6 +1,6 @@
 {
   "name": "@resystem/ida-js-sdk",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "main": "dist/ida.min.js",
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.11.6",
+    "@babel/helper-regex": "^7.10.5",
     "ajv": "^6.12.4",
     "ajv-keywords": "^3.5.2",
     "ansi-regex": "^4.1.0",
