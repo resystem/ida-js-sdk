@@ -16,7 +16,7 @@ const verifyAuth_ = (token) => axios.post(
 );
 
 const defaultPopupConfiguration = {
-  width: 320,
+  width: 400,
   height: 480,
 };
 
