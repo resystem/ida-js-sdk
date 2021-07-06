@@ -19,7 +19,7 @@ const Auth = {
  */
 const setCurrentUser = (currentUser) => {
   if (currentUser) {
-    window.localStorage.setItem('ida@id', currentUser.id);
+    window.localStorage.setItem('ida@id', currentUser._id);
     window.localStorage.setItem('ida@token', currentUser.token);
   }
 
