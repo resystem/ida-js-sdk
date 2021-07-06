@@ -5,7 +5,7 @@ import axios from 'axios';
  * @returns {Promise} contains verify data
  */
 const verifyAuth_ = (token) => axios.post(
-  `${process.env.API_URI}/validate-token`,
+  `${process.env.API_URI}/api/user/validate`,
   { token },
   {
     headers: {
@@ -16,8 +16,8 @@ const verifyAuth_ = (token) => axios.post(
 );
 
 const defaultPopupConfiguration = {
-  width: 400,
-  height: 480,
+  width: 375,
+  height: 600,
 };
 
 /**
@@ -31,7 +31,7 @@ export const signinWithPopup = (popupConfiguration = defaultPopupConfiguration, 
   // let logged = false;
   try {
     const openedWindow = window.open(
-      `${process.env.ACCOUNTS_URI}?appId=${Auth.appId}&appKey=${Auth.appKey}&client_id=${socket.id}`,
+      `${process.env.ACCOUNTS_URI}?i=${Auth.appId}&k=${Auth.appKey}&c=${socket.id}`,
       '',
       `
         toolbar=no,
@@ -63,7 +63,7 @@ export const signupWithPopup = (popupConfiguration = defaultPopupConfiguration, 
   // let logged = false;
   try {
     const openedWindow = window.open(
-      `${process.env.ACCOUNTS_URI}/signup?appId=${Auth.appId}&appKey=${Auth.appKey}&client_id=${socket.id}`,
+      `${process.env.ACCOUNTS_URI}/signup?i=${Auth.appId}&k=${Auth.appKey}&c=${socket.id}`,
       '',
       `
         toolbar=no,
@@ -105,7 +105,6 @@ export const init = async ({ onAuthChange }) => {
   try {
     tokenVerification = await verifyAuth_(token);
   } catch (err) {
-    console.error('err', [err]);
     window.localStorage.removeItem('ida@id');
     window.localStorage.removeItem('ida@token');
     onAuthChange(null);
